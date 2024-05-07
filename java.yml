@@ -1,0 +1,33 @@
+---
+- name: Install Java 17 using binary
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Extract Java 17 binary
+      become: yes
+      unarchive:
+        src: /home/amit/devops/dist/jdk-17.0.10_linux-x64_bin.tar.gz
+        dest: /usr/local
+        remote_src: yes
+    
+    - name: Rename JDK folder in /usr/local
+      become: yes
+      command: mv /usr/local/jdk-17.0.10 /usr/local/jdk-17    
+
+    - name: Set JAVA_HOME environment variable
+      become: yes
+      lineinfile:
+        dest: /home/amit/.bashrc
+        line: 'export JAVA_HOME=/usr/local/jdk-17'
+
+    - name: Set JAVA_HOME in PATH
+      become: yes
+      lineinfile:
+        dest: /home/amit/.bashrc
+        line: 'export PATH=$JAVA_HOME/bin:$PATH'
+
+    - name: Source .bashrc
+      become: yes
+      shell: source ~/.bashrc
+

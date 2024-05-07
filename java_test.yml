@@ -1,0 +1,9 @@
+---
+- name: check version
+  hosts: localhost
+  tasks:
+    - name: Run java --version
+      shell: java -version
+      register: out
+
+    - debug: var=out
