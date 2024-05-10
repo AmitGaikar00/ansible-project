@@ -1,0 +1,43 @@
+---
+- name: Install Nginx
+  hosts: localhost
+  become: yes
+  vars:
+    nginx_extract_dir: "/home/amit/devops/opt"
+  
+  tasks:
+    - name: Extract Nginx tar
+      unarchive:
+        src: "/home/amit/devops/dist/nginx-1.26.0.tar.gz"
+        dest: "{{ nginx_extract_dir }}"
+        remote_src: yes
+
+    - name: Create nginx user
+      user:
+        name: nginx
+        shell: /sbin/nologin
+        state: present
+
+    - name: Run configure script
+      shell: "./configure"
+      args:
+        chdir: "{{ nginx_extract_dir }}/nginx-1.26.0"
+
+    - name: make
+      shell: make
+      args:
+        chdir: "{{ nginx_extract_dir }}/nginx-1.26.0"
+
+    - name: make install
+      shell: make install
+      args:
+        chdir: "{{ nginx_extract_dir }}/nginx-1.26.0"
+
+    - name: Copy HTML file
+      copy:
+        src: /home/amit/devops/html
+        dest: /usr/local/nginx/html/index.html
+
+    - name: Start Nginx
+      command: /usr/local/nginx/sbin/nginx    
+
